@@ -2,6 +2,7 @@ from flask import Flask
 from marshmallow import Schema, fields, pre_load, validate
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 
 ma = Marshmallow()
@@ -10,20 +11,34 @@ db = SQLAlchemy()
 # make requests with requests.post(URL, json = {'id': 3, 'name': 'test3'})
 
 class Session(db.Model):
-    __tablename__ = 'toilet_session'
+    __tablename__ = 'toilet_sessions'
     id = db.Column(db.Integer, primary_key=True)
-    start = db.Column(db.String, nullable=False)
-    end = db.Column(db.String, nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
+    start = db.Column(db.Integer, nullable=False)
+    end = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, start, end, duration):
+    def __init__(self, start, end):
         self.start = start
         self.end = end
-        self.duration = duration
+
+
+class Event(db.Model):
+    __tablename__ = 'toilet_events'
+    id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.String, nullable=False)
+    location = db.Column(db.String, nullable=False)
+
+    def __init__(self, created, location):
+        self.created = created
+        self.location = location
 
 
 class SessionSchema(ma.Schema):
     id = fields.Integer()
-    start = fields.Str(required=True)
-    end = fields.Str(required=True)
-    duration = fields.Integer(required=True)
+    start = fields.Integer(required=True)
+    end = fields.Integer(required=True)
+
+
+class EventSchema(ma.Schema):
+    id = fields.Integer()
+    created = fields.String()
+    location = fields.String(required=True)

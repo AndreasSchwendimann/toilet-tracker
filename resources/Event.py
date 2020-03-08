@@ -1,33 +1,33 @@
 from flask import request
 from flask_restful import Resource
-from Model import db, Session, SessionSchema
+from Model import db, Event, EventSchema
 
-sessions_schema = SessionSchema(many=True)
-session_schema = SessionSchema()
+events_schema = EventSchema(many=True)
+event_schema = EventSchema()
 
-class SessionResource(Resource):
+class EventResource(Resource):
     def get(self):
-        sessions = Session.query.all()
-        sessions = sessions_schema.dump(sessions)
-        return {'status': 'success', 'data': sessions}, 200
+        events = Event.query.all()
+        events = events_schema.dump(events)
+        return {'status': 'success', 'data': events}, 200
 
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
             return {'message': 'No input data provided'}, 400
         # Validate and deserialize input
-        data, errors = session_schema.load(json_data)
+        data, errors = event_schema.load(json_data)
         if errors:
             return errors, 422
-        session = Session(
-            start=json_data['start'],
-            end=json_data['end']
+        event = Event(
+            location=json_data['location'],
+            created=json_data['created']
         )
 
-        db.session.add(session)
+        db.session.add(event)
         db.session.commit()
 
-        result = session_schema.dump(session).data
+        result = event_schema.dump(event).data
 
         return {"status": 'success', 'data': result}, 201
 
@@ -36,17 +36,17 @@ class SessionResource(Resource):
         if not json_data:
             return {'message': 'No input data provided'}, 400
         # Validate and deserialize input
-        data, errors = session_schema.load(json_data)
+        data, errors = event_schema.load(json_data)
         if errors:
             return errors, 422
-        session = Session.query.filter_by(id=data['id']).first()
-        if not session:
+        event = Event.query.filter_by(id=data['id']).first()
+        if not event:
             return {'message': 'Category does not exist'}, 400
-        session.start = data['start']
-        session.end = data['end']
+        event.location = data['location']
+        event.created = data['created']
         db.session.commit()
 
-        result = session_schema.dump(session).data
+        result = event_schema.dump(event).data
 
         return {"status": 'success', 'data': result}, 204
 
@@ -55,12 +55,12 @@ class SessionResource(Resource):
         if not json_data:
             return {'message': 'No input data provided'}, 405
         # Validate and deserialize input
-        data, errors = session_schema.load(json_data)
+        data, errors = event_schema.load(json_data)
         if errors:
             return errors, 422
-        session = Session.query.filter_by(id=data['id']).delete()
+        event = Event.query.filter_by(id=data['id']).delete()
         db.session.commit()
 
-        result = session_schema.dump(session).data
+        result = event_schema.dump(event).data
 
         return {"status": 'success', 'data': result}, 204
