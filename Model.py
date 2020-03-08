@@ -12,8 +12,8 @@ db = SQLAlchemy()
 class Session(db.Model):
     __tablename__ = 'toilet_session'
     id = db.Column(db.Integer, primary_key=True)
-    start = db.Column(db.DateTime, nullable=False)
-    end = db.Column(db.DateTime, nullable=False)
+    start = db.Column(db.String, nullable=False)
+    end = db.Column(db.String, nullable=False)
     duration = db.Column(db.Integer, nullable=False)
 
     def __init__(self, start, end, duration):
@@ -24,6 +24,6 @@ class Session(db.Model):
 
 class SessionSchema(ma.Schema):
     id = fields.Integer()
-    start = fields.DateTime(required=True)
-    end = fields.DateTime(required=True)
-    end = fields.Integer(required=True)
+    start = fields.Str(required=True)
+    end = fields.Str(required=True)
+    duration = fields.Integer(required=True)

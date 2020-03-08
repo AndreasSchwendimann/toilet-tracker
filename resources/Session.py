@@ -2,13 +2,13 @@ from flask import request
 from flask_restful import Resource
 from Model import db, Session, SessionSchema
 
-sessions_schema = CategorySchema(many=True)
-session_schema = CategorySchema()
+sessions_schema = SessionSchema(many=True)
+session_schema = SessionSchema()
 
 class SessionResource(Resource):
     def get(self):
         sessions = Session.query.all()
-        sessions = sessions_schema.dump(session)
+        sessions = sessions_schema.dump(sessions)
         return {'status': 'success', 'data': sessions}, 200
 
     def post(self):
@@ -19,11 +19,10 @@ class SessionResource(Resource):
         data, errors = session_schema.load(json_data)
         if errors:
             return errors, 422
-        session = Session.query.filter_by(name=data['name']).first()
-        if session:
-            return {'message': 'Category already exists'}, 400
         session = Session(
-            name=json_data['name']
+            start=json_data['start'],
+            end=json_data['end'],
+            duration=json_data['duration']
         )
 
         db.session.add(session)
@@ -44,7 +43,9 @@ class SessionResource(Resource):
         session = Session.query.filter_by(id=data['id']).first()
         if not session:
             return {'message': 'Category does not exist'}, 400
-        session.name = data['name']
+        session.name = data['start']
+        session.end = data['end']
+        session.duration = data['duration']
         db.session.commit()
 
         result = session_schema.dump(session).data

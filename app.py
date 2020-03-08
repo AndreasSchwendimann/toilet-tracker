@@ -10,4 +10,4 @@ api = Api(api_bp)
 # Routes
 
 api.add_resource(Hello, '/Hello')
-api.add_resource(CategoryResource, '/Session')
+api.add_resource(SessionResource, '/Session')
