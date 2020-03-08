@@ -21,7 +21,8 @@ class EventResource(Resource):
             return errors, 422
         event = Event(
             location=json_data['location'],
-            created=json_data['created']
+            created=json_data['created'],
+            action=json_data['action']
         )
 
         db.session.add(event)
@@ -44,6 +45,7 @@ class EventResource(Resource):
             return {'message': 'Category does not exist'}, 400
         event.location = data['location']
         event.created = data['created']
+        event.action = data['action']
         db.session.commit()
 
         result = event_schema.dump(event).data

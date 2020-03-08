@@ -26,10 +26,12 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
+    action = db.Column(db.String, nullable=False)
 
-    def __init__(self, created, location):
+    def __init__(self, created, location, action):
         self.created = created
         self.location = location
+        self.action = action
 
 
 class SessionSchema(ma.Schema):
@@ -42,3 +44,4 @@ class EventSchema(ma.Schema):
     id = fields.Integer()
     created = fields.String()
     location = fields.String(required=True)
+    action = fields.String(required=True)
